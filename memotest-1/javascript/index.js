@@ -24,6 +24,20 @@
 
 var rankingUsers = [];
 
+//variable global para mis clicks
+
+//mis variables globales
+var clicks = 0;
+
+var card1 = null;
+
+var card2 = null;
+
+var match = 0;
+
+var pifies = 0;
+//variable global de "intentos"
+var intentos = 0;
 
 
 //función que crea mi objeto
@@ -72,6 +86,8 @@ function creandoMiTablero() {
     var card = $("<div class='card'></div>");
     var cardFaceCovered = $("<div class='card__face card__face--covered'></div>");
     var cardFaceUncovered = $("<div class='card__face card__face--uncovered'></div>");
+    card.attr("id", i);
+    card.data("imgValue", uncoveredImg[i].number)
 
     var imgCovered = $("<img class='tapada' />");
     imgCovered.attr("src", "../imagenes/tapada.jpg")
@@ -91,6 +107,7 @@ function creandoMiTablero() {
  function iterandoFuerteUncoveredImg() {
   for (let i = 0; i < uncoveredImg.length; i++) {
     $(".card__face--uncovered img").eq(i).attr("src", uncoveredImg[i].url);
+    //$(".card__face--uncovered img").eq(i).attr("data-id", uncoveredImg[i].number);
      }
 }
 
@@ -98,10 +115,61 @@ function creandoMiTablero() {
 function flippinCard() {
  
   $(".card").on("click", function() {
-   $(this).toggleClass("is-flipped")
+    var miCartaSeleccionada = $(this);
+    const valueCard = $(this).data('imgValue');
+    const valueId = $(this).attr('id');
+    miCartaSeleccionada.addClass("is-flipped");
+    clicks = clicks + 1;
+    
+    if (clicks === 1) {
+      card1 = {
+        valueCard,
+        valueId
+      }
+      
+    }
+    else {
+      card2 = {
+        valueCard,
+        valueId
+      }
+      comparandoImagenes(card1, card2) 
+      clicks = 0
+    }
+
+   /*var miData = $(this).find(".destapada")
+   for (let i = 0; i < miData.length; i++) {
+     var comparandoDatas = miData[i].dataset.id
+     if (comparandoDatas == comparandoDatas) {
+       return true;
+     
+   }*/
+  function comparandoImagenes(imagen1, imagen2) {
+    var seEncontro = false;
+      if ( imagen1.valueCard === imagen2.valueCard && imagen1.valueId === imagen1.valueId) {
+        setTimeout(function(){
+        $("#" + imagen2.valueId).children().addClass("grayscale");
+        $("#" + imagen1.valueId).children().addClass("grayscale");
+        }, 700)
+        seEncontro = true;
+
+        match++;
+        console.log("cantidad de matchs " + match)
+        return seEncontro;
+      }
+      else {
+        setTimeout(function(){
+        $("#" + imagen1.valueId).removeClass("is-flipped");
+        $("#" + imagen2.valueId).removeClass("is-flipped");
+        }, 800)
+        pifies++
+        console.log("tus pifies son: " + pifies)
+        return seEncontro;
+      }
+  }
+
  });
 }
-
 
 //showing images, another way
 /*var myImgUncovered = $(".uncovered-img-container img");
