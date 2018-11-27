@@ -28,8 +28,8 @@
           <div class="container-1-btns">
             <!--Acá no debería estar el onclick de la función cheking name, sino la de filtrar por dificultad-->
             <button class="btn easy" onclick="easyMode()">Fácil</button>
-            <button class="btn medium" onclick="checkingName()">Intermedio</button>
-            <button class="btn hard" onclick="checkingName()">Difícil</button>
+            <button class="btn medium" onclick="mediumMode()">Intermedio</button>
+            <button class="btn hard" onclick="hardMode()">Difícil</button>
           <div class="errorMessage">
             <!--Agregar estilos al mensaje de error-->
           </div>
@@ -50,14 +50,14 @@
         <div class="container-2-text">
           <p>Hola <span ></span></p>
           <p>Encontrá todos los pares en menos de <span id="attempts"></span> intentos</p>
-          <p>Nivel</p>
+          <p>Nivel <span id="difficultyText"></span></p>
           <span id="mode"></span>
         </div>
         <div class="container-2-board">
         
         </div>
         <div class="attempt-text">
-          <p>Intentos:</p>
+          <span>Intentos: <span class="attempts"></span></span>
         </div>
         </div>
       </div>

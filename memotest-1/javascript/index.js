@@ -1,24 +1,4 @@
 
-  /*class Users {
-    constructor (nameUser, level, attempts) {
-      this.nameUser = nameUser;
-      this.level = level;
-      this.attempts = attempts;
-    }
-    //Methods
-    //Necesito por lo menos un método que guarde mi información de clase y/o objetos en un array.
-    //también necesito el método que chequee el nombre
-    checkingName() { //Hay que correjir esto.
-      $("button").on("click", function () {
-        if  ($("#userName").val()  === "") {
-          $(".errorMessage").text("El nombre es requerido");
-          }
-        });
-    }
-    //podré crear un método que de mi clase cree un objeto?
-
-  }*/
-//voy a intentar con objetos...
 
 //creo mi arreglo vacío que lo voy a ir pusheando
 
@@ -33,24 +13,21 @@ var card1 = null;
 
 var card2 = null;
 
-var match = 0;
-
-var pifies = 0;
-//variable global de "intentos"
-var intentos = 0;
-
-
-//función que crea mi objeto
-/*function obtainObjectUser() {
-  var nameUser = $("#userName").val();
-  var easyMode = $(".easy");
-  var mediumMode = $(".medium");
-  var hardMode = $(".hard");
-  // esto tengo que ver como hacerlo: var attempts 
-  //Y si uso un if? que detecte cada botón seleccionado
+var player = {
+  name: '',
+  difficulty: '',
+  attemptsByUser: 0,
+  totalAttempts: 0,
 
   
-}*/
+}
+
+var attemptsMade = 0;
+
+var pifies = 0;
+
+var totalAttempts = 0; //global varial "attempts"
+
 
 
 //creo mi array de imágenes, para que sean agregadas de manera dinámica.
@@ -137,13 +114,6 @@ function flippinCard() {
       clicks = 0
     }
 
-   /*var miData = $(this).find(".destapada")
-   for (let i = 0; i < miData.length; i++) {
-     var comparandoDatas = miData[i].dataset.id
-     if (comparandoDatas == comparandoDatas) {
-       return true;
-     
-   }*/
   function comparandoImagenes(imagen1, imagen2) {
     var seEncontro = false;
       if ( imagen1.valueCard === imagen2.valueCard && imagen1.valueId === imagen1.valueId) {
@@ -151,51 +121,49 @@ function flippinCard() {
         $("#" + imagen2.valueId).children().addClass("grayscale");
         $("#" + imagen1.valueId).children().addClass("grayscale");
         }, 700)
-        seEncontro = true;
+        attemptsMade = attemptsMade + 1
+        console.log(attemptsMade);
 
-        match++;
-        console.log("cantidad de matchs " + match)
-        return seEncontro;
+        verifyingWinning();
+        seEncontro = true;
+        return seEncontro
       }
       else {
         setTimeout(function(){
         $("#" + imagen1.valueId).removeClass("is-flipped");
         $("#" + imagen2.valueId).removeClass("is-flipped");
         }, 800)
-        pifies++
-        console.log("tus pifies son: " + pifies)
+        var pifiesTotales = player.totalAttempts;
+        pifies = pifies + 1
+        console.log(attemptsMade)
+        var pifiesPorSegundo = pifiesTotales - pifies
+        $(".attempts").text(pifiesPorSegundo);
+        youLose(pifiesPorSegundo);
         return seEncontro;
       }
   }
 
- });
-}
-
-//showing images, another way
-/*var myImgUncovered = $(".uncovered-img-container img");
-
-for (let i = 0; i < myImgUncovered.length; i++) {
-  myImgUncovered.eq(i).attr("src", uncoveredImg[i].url);
-}*/
-
-
-/*
-function showImages() {
- $(".container-2-img").on("click", function() {
-  
- });
  
-}
-*/
+    
 
-//función chequear nombre
-function checkingName() {
-  if ($("#userName").val() === "") {
-    $(".errorMessage").text("El nombre es requerido");
-    return false;
-  }
-  
+ });
 }
+
+//verificar si ganó
+function verifyingWinning() {
+  if (attemptsMade == 6) {
+    console.log("ganastE")
+  }
+
+}
+
+function youLose(wrongAttemps) {
+  if (wrongAttemps === 0 && attempts.made != 6) {
+    console.log("U LOSE")
+  }
+}
+
+
 
 //creo una función que filtre por dificultad
 
@@ -205,10 +173,73 @@ function easyMode() {
    
    $(".container-1").toggle();
    $(".container-2").addClass("show-board");
+
+   console.log({player})
+
+   attempts =  18;
+   player.totalAttempts = attempts;
+   chosenDifficulty = "fácil";
+   player.difficulty = chosenDifficulty;
+   console.log({player})
+   $("#difficultyText").text(chosenDifficulty);
+   $(".attempts").text(player.totalAttempts)
+   rankingUsers.push(player)
   }
 }
+
+function mediumMode() {
+  var user = checkingName();
+  if (user != false) {
+   
+   $(".container-1").toggle();
+   $(".container-2").addClass("show-board");
+   attempts = 12;
+   player.totalAttempts = totalAttempts;
+   chosenDifficulty = "intermedio";
+    player.difficulty = chosenDifficulty;
+   $("#difficultyText").text(chosenDifficulty);
+   $(".attempts").text(player.totalAttempts)
+   rankingUsers.push(player)
+  }
+}
+
+function hardMode() {
+  var user = checkingName();
+  
+  if (user != false) {
+   $(".container-1").toggle();
+   $(".container-2").addClass("show-board");
+   attempts = 9;
+   player.totalAttempts = attempts;
+   chosenDifficulty = "difícil";
+  player.difficulty = chosenDifficulty;
+   $("#difficultyText").text(chosenDifficulty);
+   $(".attempts").text(player.totalAttempts)
+   rankingUsers.push(player)
+  }
+  
+}
+
+//función chequear nombre
+function checkingName() {
+  var nameUser = $("#userName").val();
+  if (nameUser === "") {
+    $(".errorMessage").text("El nombre es requerido");
+
+    return false;
+  }
+  else {
+    player.name = nameUser;
+    }
+  }
+
+function winningTheGame() {
+  console.log(attemptsMade)
+}
+
 
 
 creandoMiTablero();
 iterandoFuerteUncoveredImg();
 flippinCard();
+winningTheGame();
