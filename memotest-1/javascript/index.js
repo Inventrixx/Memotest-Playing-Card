@@ -1,11 +1,4 @@
 
-
-//creo mi arreglo vacío que lo voy a ir pusheando
-
-var rankingUsers = [];
-
-//variable global para mis clicks
-
 //mis variables globales
 var clicks = 0;
 
@@ -18,19 +11,14 @@ var player = {
   difficulty: '',
   attemptsByUser: 0,
   totalAttempts: 0,
-
-  
 }
-
+var rankingUsers = [];
 var attemptsMade = 0;
 
 var pifies = 0;
 
 var totalAttempts = 0; //global varial "attempts"
 
-
-
-//creo mi array de imágenes, para que sean agregadas de manera dinámica.
 var uncoveredImg = [
   {number: 1, url:"../imagenes/alce.jpg"},
   {number: 1, url: "../imagenes/alce.jpg"},
@@ -51,8 +39,6 @@ var uncoveredImg = [
 uncoveredImg = uncoveredImg.sort(function (a,b) {
   return Math.random() - 0.5;
 });
-
-
 
 //creating board
 function creandoMiTablero() {
@@ -80,17 +66,14 @@ function creandoMiTablero() {
 }
 
  //ITERANDO MIS 12 IMGS!
-
  function iterandoFuerteUncoveredImg() {
   for (let i = 0; i < uncoveredImg.length; i++) {
     $(".card__face--uncovered img").eq(i).attr("src", uncoveredImg[i].url);
-    //$(".card__face--uncovered img").eq(i).attr("data-id", uncoveredImg[i].number);
      }
 }
 
 //flipping card
 function flippinCard() {
- 
   $(".card").on("click", function() {
     var miCartaSeleccionada = $(this);
     const valueCard = $(this).data('imgValue');
@@ -122,9 +105,7 @@ function flippinCard() {
         $("#" + imagen1.valueId).children().addClass("grayscale");
         }, 700)
         attemptsMade = attemptsMade + 1
-        console.log(attemptsMade);
-
-        verifyingWinning();
+        youWin();
         seEncontro = true;
         return seEncontro
       }
@@ -133,39 +114,79 @@ function flippinCard() {
         $("#" + imagen1.valueId).removeClass("is-flipped");
         $("#" + imagen2.valueId).removeClass("is-flipped");
         }, 800)
-        var pifiesTotales = player.totalAttempts;
+      
         pifies = pifies + 1
-        console.log(attemptsMade)
-        var pifiesPorSegundo = pifiesTotales - pifies
-        $(".attempts").text(pifiesPorSegundo);
-        youLose(pifiesPorSegundo);
+        $(".attempts").text(pifies)
+        youLose(pifies)
         return seEncontro;
       }
   }
-
- 
-    
-
  });
 }
 
-//verificar si ganó
-function verifyingWinning() {
+function youWin() {
   if (attemptsMade == 6) {
-    console.log("ganastE")
+    verificarLocalStorage();
+    rankingUsers.push(player);
+    savingPlayers();
+    creeatingRanking();
+    player.attemptsByUser = pifies
+    $(".modal").addClass("show-modal");
+    $(".insert-text").text("Felicidades! Ganaste");
+    var spanAttempts = $("<span class='attempts'>Con " + player.attemptsByUser + " intentos</span>")
+    $(".modal-text").append(spanAttempts)
+
   }
+}
+
+function verificarLocalStorage() {
+  var playersSaved = localStorage.getItem("winnerPlayers");
+  if (playersSaved) {
+    rankingUsers = JSON.parse(playersSaved);
+  }
+}
+
+  function savingPlayers() {
+    rankingToJSON = JSON.stringify(rankingUsers)
+    JSON.parse(rankingToJSON)
+    localStorage.setItem("winnerPlayers", rankingToJSON);
 
 }
 
 function youLose(wrongAttemps) {
-  if (wrongAttemps === 0 && attempts.made != 6) {
-    console.log("U LOSE")
+  if (wrongAttemps === player.totalAttempts && attempts.made != 6) {
+    $(".insert-text").text("Perdiste! Inténtalo de nuevo!");
+    $(".modal").addClass("show-modal");
+    $(".cont-ranking-table").addClass("hide-table")
   }
 }
 
+function creatingTable() {
+  var tableRanking = $("<table id='ranking-table'></table>")
+  var myContTable = $(".cont-ranking-table") 
+  var tableHead = "<th>Nombre</th><th>Dificultad</th><th>Intentos Tot.</th><th>Intentos</th>"
+  tableRanking.append(tableHead);
+  myContTable.append(tableRanking);
+}
 
+function creeatingRanking() {
+  var tableRanking = $("#ranking-table");
+  for (let i = 0; i < rankingUsers.length; i++) {
+    console.log("hola")
+    var fila = $("<tr id='fila'></tr>")
+    var tdNombre = "<td>" + rankingUsers[i].name + "</td>";
+    var tdNivel = "<td>" + rankingUsers[i].difficulty + "</td>";
+    var tdIntentosTotales = "<td>" + rankingUsers[i].totalAttempts + "</td>";
+    var tdIntentosUsuario = "<td>" + rankingUsers[i].attemptsByUser + "</td>";
 
-//creo una función que filtre por dificultad
+    fila.append(tdNombre);
+    fila.append(tdNivel);
+    fila.append(tdIntentosTotales)
+    fila.append(tdIntentosUsuario);
+    tableRanking.append(fila);
+  }
+
+}
 
 function easyMode() {
   var user = checkingName();
@@ -174,16 +195,12 @@ function easyMode() {
    $(".container-1").toggle();
    $(".container-2").addClass("show-board");
 
-   console.log({player})
-
    attempts =  18;
    player.totalAttempts = attempts;
    chosenDifficulty = "fácil";
    player.difficulty = chosenDifficulty;
-   console.log({player})
+   $("#attempts").text(player.totalAttempts)
    $("#difficultyText").text(chosenDifficulty);
-   $(".attempts").text(player.totalAttempts)
-   rankingUsers.push(player)
   }
 }
 
@@ -194,12 +211,11 @@ function mediumMode() {
    $(".container-1").toggle();
    $(".container-2").addClass("show-board");
    attempts = 12;
-   player.totalAttempts = totalAttempts;
+   player.totalAttempts = attempts;
    chosenDifficulty = "intermedio";
     player.difficulty = chosenDifficulty;
+    $("#attempts").text(player.totalAttempts)
    $("#difficultyText").text(chosenDifficulty);
-   $(".attempts").text(player.totalAttempts)
-   rankingUsers.push(player)
   }
 }
 
@@ -213,14 +229,11 @@ function hardMode() {
    player.totalAttempts = attempts;
    chosenDifficulty = "difícil";
   player.difficulty = chosenDifficulty;
-   $("#difficultyText").text(chosenDifficulty);
-   $(".attempts").text(player.totalAttempts)
-   rankingUsers.push(player)
-  }
+  $("#attempts").text(player.totalAttempts)
+   $("#difficultyText").text(chosenDifficulty);  }
   
 }
 
-//función chequear nombre
 function checkingName() {
   var nameUser = $("#userName").val();
   if (nameUser === "") {
@@ -230,16 +243,17 @@ function checkingName() {
   }
   else {
     player.name = nameUser;
+    $("#nameUser").text(player.name)
     }
   }
 
-function winningTheGame() {
-  console.log(attemptsMade)
-}
-
+  //reloadPage
+$(".btn-reloadPage").on("click", function() {
+  location.reload();
+});
 
 
 creandoMiTablero();
 iterandoFuerteUncoveredImg();
 flippinCard();
-winningTheGame();
+creatingTable();
